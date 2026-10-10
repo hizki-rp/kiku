@@ -1,0 +1,17 @@
+node_modules/
+.env
+!.env.example
+api/uploads/audio/
+api/uploads/lyrics/
+app/dist/
+app/.expo/
+app/web-build/
+*.log
+app/android/
+app/ios/
+deploy/hostinger.env
+deploy/*.zip
+deploy/tomoshibi.sql
+db.md
+ssh.md
+deploy/admin-login.txt

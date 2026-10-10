@@ -1,0 +1,9 @@
+# Hostinger (Apache): route everything except real files to index.php, keep secrets private.
+Options -Indexes
+<Files ".env">
+  Require all denied
+</Files>
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [QSA,L]

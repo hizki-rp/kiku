@@ -1,0 +1,15 @@
+# Render Blueprint: New → Blueprint → pick this repo. Fill the two secrets when prompted.
+services:
+  - type: web
+    name: tomoshibi-socket
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm ci --omit=dev
+    startCommand: node server.js
+    healthCheckPath: /
+    envVars:
+      - key: JWT_SECRET
+        sync: false
+      - key: CLIENT_ORIGIN
+        sync: false

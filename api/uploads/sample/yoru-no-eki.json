@@ -1,0 +1,66 @@
+{
+  "songId": 1,
+  "lines": [
+    { "line": 1, "start": 4.0, "end": 8.5, "jp": "夜の駅で 君を待つ", "en": "At the night station, I wait for you",
+      "words": [
+        { "t": "夜", "reading": "よる", "romaji": "yoru", "meaning": "night", "note": "Noun. 夜の… = \"of the night\"." },
+        { "t": "の", "reading": "の", "romaji": "no", "meaning": "of / 's", "note": "Particle linking two nouns." },
+        { "t": "駅", "reading": "えき", "romaji": "eki", "meaning": "station", "note": "Noun. Train station." },
+        { "t": "で", "reading": "で", "romaji": "de", "meaning": "at / in", "note": "Particle: where an action happens." },
+        { "t": "君", "reading": "きみ", "romaji": "kimi", "meaning": "you", "note": "Soft, familiar \"you\" — very common in songs." },
+        { "t": "を", "reading": "を", "romaji": "o", "meaning": "(object marker)", "note": "Marks what the verb acts on." },
+        { "t": "待つ", "reading": "まつ", "romaji": "matsu", "meaning": "to wait", "note": "Verb, dictionary form." }
+      ] },
+    { "line": 2, "start": 9.0, "end": 13.0, "jp": "小さな灯り ひとつ", "en": "Just one small light",
+      "words": [
+        { "t": "小さな", "reading": "ちいさな", "romaji": "chiisana", "meaning": "small, little", "note": "Adjective before a noun." },
+        { "t": "灯り", "reading": "あかり", "romaji": "akari", "meaning": "a light, lamp glow", "note": "Same 灯 as ともしび (tomoshibi) — this app's name." },
+        { "t": "ひとつ", "reading": "ひとつ", "romaji": "hitotsu", "meaning": "one (thing)", "note": "Counter for general things." }
+      ] },
+    { "line": 3, "start": 13.5, "end": 18.0, "jp": "また明日 歌おう", "en": "Let's sing again tomorrow",
+      "words": [
+        { "t": "また", "reading": "また", "romaji": "mata", "meaning": "again", "note": "Adverb. また明日 = see you tomorrow." },
+        { "t": "明日", "reading": "あした", "romaji": "ashita", "meaning": "tomorrow", "note": "Noun." },
+        { "t": "歌おう", "reading": "うたおう", "romaji": "utaou", "meaning": "let's sing", "note": "Volitional form of 歌う (utau, to sing)." }
+      ] },
+    { "line": 4, "start": 19.0, "end": 23.5, "jp": "窓の外 雨が降る", "en": "Outside the window, rain is falling",
+      "words": [
+        { "t": "窓", "reading": "まど", "romaji": "mado", "meaning": "window", "note": "Noun." },
+        { "t": "の", "reading": "の", "romaji": "no", "meaning": "of / 's", "note": "Particle linking two nouns." },
+        { "t": "外", "reading": "そと", "romaji": "soto", "meaning": "outside", "note": "Noun. 窓の外 = outside the window." },
+        { "t": "雨", "reading": "あめ", "romaji": "ame", "meaning": "rain", "note": "Noun." },
+        { "t": "が", "reading": "が", "romaji": "ga", "meaning": "(subject marker)", "note": "Marks who or what does the action." },
+        { "t": "降る", "reading": "ふる", "romaji": "furu", "meaning": "to fall (rain, snow)", "note": "Verb, dictionary form." }
+      ] },
+    { "line": 5, "start": 24.5, "end": 29.0, "jp": "温かい お茶を 飲む", "en": "I drink warm tea",
+      "words": [
+        { "t": "温かい", "reading": "あたたかい", "romaji": "atatakai", "meaning": "warm", "note": "い-adjective. Warm to the touch or heart." },
+        { "t": "お茶", "reading": "おちゃ", "romaji": "ocha", "meaning": "tea", "note": "Noun. お makes it polite." },
+        { "t": "を", "reading": "を", "romaji": "o", "meaning": "(object marker)", "note": "Marks what the verb acts on." },
+        { "t": "飲む", "reading": "のむ", "romaji": "nomu", "meaning": "to drink", "note": "Verb, dictionary form." }
+      ] },
+    { "line": 6, "start": 30.0, "end": 35.0, "jp": "君の声が 聞こえる", "en": "I can hear your voice",
+      "words": [
+        { "t": "君", "reading": "きみ", "romaji": "kimi", "meaning": "you", "note": "Soft, familiar \"you\"." },
+        { "t": "の", "reading": "の", "romaji": "no", "meaning": "of / 's", "note": "君の = your." },
+        { "t": "声", "reading": "こえ", "romaji": "koe", "meaning": "voice", "note": "Noun." },
+        { "t": "が", "reading": "が", "romaji": "ga", "meaning": "(subject marker)", "note": "Marks who or what does the action." },
+        { "t": "聞こえる", "reading": "きこえる", "romaji": "kikoeru", "meaning": "can be heard", "note": "Verb. Sound reaches you on its own." }
+      ] },
+    { "line": 7, "start": 36.0, "end": 41.0, "jp": "ここは 僕らの家", "en": "This is our home",
+      "words": [
+        { "t": "ここ", "reading": "ここ", "romaji": "koko", "meaning": "here", "note": "Pronoun." },
+        { "t": "は", "reading": "は", "romaji": "wa", "meaning": "(topic marker)", "note": "Written は, read \"wa\"." },
+        { "t": "僕ら", "reading": "ぼくら", "romaji": "bokura", "meaning": "we, us", "note": "Casual \"we\"." },
+        { "t": "の", "reading": "の", "romaji": "no", "meaning": "of / 's", "note": "僕らの = our." },
+        { "t": "家", "reading": "いえ", "romaji": "ie", "meaning": "home, house", "note": "Noun." }
+      ] },
+    { "line": 8, "start": 42.0, "end": 47.0, "jp": "灯りをつけて 待ってる", "en": "I turn on the light and wait",
+      "words": [
+        { "t": "灯り", "reading": "あかり", "romaji": "akari", "meaning": "a light, lamp glow", "note": "Noun." },
+        { "t": "を", "reading": "を", "romaji": "o", "meaning": "(object marker)", "note": "Marks what the verb acts on." },
+        { "t": "つけて", "reading": "つけて", "romaji": "tsukete", "meaning": "turn on, and…", "note": "て-form of つける (to switch on)." },
+        { "t": "待ってる", "reading": "まってる", "romaji": "matteru", "meaning": "am waiting", "note": "Casual of 待っている." }
+      ] }
+  ]
+}

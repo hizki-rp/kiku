@@ -1,0 +1,11 @@
+# Static audio + lyrics. Never execute anything uploaded here.
+Options -Indexes
+<FilesMatch "\.(php|phtml|phar)$">
+  Require all denied
+</FilesMatch>
+<IfModule mod_headers.c>
+  Header set Access-Control-Allow-Origin "*"
+  <FilesMatch "\.(mp3|ogg|opus|m4a|webm|wav)$">
+    Header set Cache-Control "public, max-age=2592000, immutable"
+  </FilesMatch>
+</IfModule>

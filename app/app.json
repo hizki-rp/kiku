@@ -1,0 +1,62 @@
+{
+  "expo": {
+    "name": "Tomoshibi",
+    "slug": "tomoshibi",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tomoshibi.app",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Tomoshibi uses your microphone so the booth can hear you sing and chat."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0B0B0B",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "package": "com.tomoshibi.app",
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.INTERNET",
+        "android.permission.WAKE_LOCK",
+        "android.permission.BLUETOOTH",
+        "android.permission.BLUETOOTH_CONNECT"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "single",
+      "name": "Tomoshibi",
+      "themeColor": "#0B0B0B",
+      "backgroundColor": "#0B0B0B"
+    },
+    "plugins": [
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Tomoshibi uses your microphone so the booth can hear you sing and chat."
+        }
+      ],
+      "expo-font",
+      "expo-secure-store",
+      "expo-router",
+      [
+        "@config-plugins/react-native-webrtc",
+        {
+          "microphonePermission": "Tomoshibi uses your microphone so the booth can hear you sing and chat."
+        }
+      ]
+    ],
+    "scheme": "tomoshibi",
+    "backgroundColor": "#0B0B0B"
+  }
+}

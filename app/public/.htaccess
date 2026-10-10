@@ -1,0 +1,7 @@
+# Hostinger: serve the exported web app as a single-page app (/admin, /room/abc, … → index.html).
+RewriteEngine On
+# The PHP API lives in /api with its own .htaccess; never rewrite it to the app.
+RewriteRule ^api(/|$) - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.html [L]
