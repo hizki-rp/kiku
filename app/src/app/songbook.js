@@ -1,5 +1,6 @@
+import { useCallback } from 'react';
 import { FlatList, Pressable, View } from 'react-native';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { useSession } from '../lib/session';
 import { BottomNav, Empty, Icon, Screen, T, Tag } from '../components/ui';
 import { mmss } from '../lib/lyrics';
@@ -7,7 +8,8 @@ import { c } from '../lib/theme';
 
 // Songbook · what can be sung tonight
 export default function Songbook() {
-  const { songs } = useSession();
+  const { songs, loadSongs } = useSession();
+  useFocusEffect(useCallback(() => { loadSongs(); }, [loadSongs]));   // pick up songs added since login
   return (
     <Screen>
       <View style={{ paddingHorizontal: 16, paddingTop: 20, paddingBottom: 14, gap: 4 }}>
@@ -24,7 +26,7 @@ export default function Songbook() {
             </View>
             <View style={{ flex: 1, minWidth: 0 }}>
               <T size={15} weight={700} numberOfLines={1}>{item.title}</T>
-              <T size={12} color={c.muted} numberOfLines={1}>{item.artist} · {mmss(item.duration_s)}{item.vocal_url ? ' · vocals + karaoke' : ' · karaoke'}</T>
+              <T size={12} color={c.muted} numberOfLines={1}>{[item.artist, mmss(item.duration_s)].filter(Boolean).join(" · ")}{item.vocal_url ? ' · vocals + karaoke' : ' · karaoke'}</T>
             </View>
             <Tag>{item.level}</Tag>
             <Icon name="play" size={16} color={c.muted} fill={c.muted} />

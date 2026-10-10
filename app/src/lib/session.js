@@ -5,6 +5,8 @@ import { io } from 'socket.io-client';
 
 export const API_URL = (process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8080/api').replace(/\/$/, '');
 // Fallback only: the API's /config (SOCKET_URL in api/.env) wins, so moving the Render service needs no rebuild.
+// Public site address, used to build shareable booth links.
+export const SITE_URL = Platform.OS === 'web' && typeof window !== 'undefined' && window.location ? window.location.origin : API_URL.replace(/\/api$/, '');
 export const SOCKET_URL = process.env.EXPO_PUBLIC_SOCKET_URL || 'http://localhost:3001';
 
 const store = Platform.OS === 'web'
@@ -16,15 +18,44 @@ const store = Platform.OS === 'web'
 
 let currentToken = null;
 let onUnauthorized = () => {};
+// JSON body, tolerating a PHP warning printed before it (only skips ahead when plain parsing fails).
+const parseBody = (t) => { try { return JSON.parse(t); } catch { try { return JSON.parse(t.slice(t.search(/[[{]/))); } catch { return {}; } } };
 export async function api(path, { method = 'GET', body, form } = {}) {
   const headers = {};
   if (currentToken) headers.Authorization = `Bearer ${currentToken}`;
   if (body) headers['Content-Type'] = 'application/json';
   const res = await fetch(API_URL + path, { method, headers, body: form || (body && JSON.stringify(body)) });
-  const data = await res.json().catch(() => ({}));
+  const text = await res.text();
+  const data = parseBody(text);
   if (res.status === 401 && currentToken) onUnauthorized();   // expired or revoked token: back to login
-  if (!res.ok) throw Object.assign(new Error(data.error || `Request failed (${res.status})`), { details: data.details });
+  // Not our JSON (a host firewall page, wrong URL…): say where it came from so it can be diagnosed.
+  const where = `${API_URL}${path}`.replace(/^https?:\/\//, '');
+  if (!res.ok && /captcha|bot verification/i.test(text)) {
+    throw new Error("The server's bot protection blocked the app. Turn off bot verification for this site in hPanel → Security / CDN.");
+  }
+  if (!res.ok) throw Object.assign(new Error(data.error || `Request failed (${res.status}) at ${where}: ${text.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 90)}`), { details: data.details });
   return data;
+}
+
+// Multipart upload with progress (fetch can't report upload progress). Same errors as api().
+export function uploadForm(path, form, onProgress) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', API_URL + path);
+    if (currentToken) xhr.setRequestHeader('Authorization', `Bearer ${currentToken}`);
+    xhr.upload.onprogress = (e) => e.lengthComputable && onProgress?.(e.loaded / e.total);
+    xhr.onerror = () => reject(new Error('Upload failed: check your connection and try again'));
+    xhr.ontimeout = () => reject(new Error('Upload timed out: try a smaller file or a better connection'));
+    xhr.timeout = 10 * 60 * 1000;
+    xhr.onload = () => {
+      const data = parseBody(xhr.responseText);
+      if (xhr.status === 401 && currentToken) onUnauthorized();
+      if (xhr.status >= 200 && xhr.status < 300) return resolve(data);
+      const blocked = /captcha|bot verification/i.test(xhr.responseText);
+      reject(Object.assign(new Error(data.error || (blocked ? "The server's bot protection blocked the upload" : `Upload failed (${xhr.status})`)), { details: data.details }));
+    };
+    xhr.send(form);
+  });
 }
 
 const Ctx = createContext(null);
@@ -84,6 +115,7 @@ export function SessionProvider({ children }) {
         reconnectionDelay: 1000, reconnectionDelayMax: 10000, timeout: 20000,
       });
       sockRef.current = s;
+      if (Platform.OS === 'web') window.__socket = s;   // debug handle for tests and devtools
 
       s.on('connect', async () => {
         setStatus('online'); setEverConnected(true);

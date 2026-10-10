@@ -2,6 +2,7 @@
 // Tomoshibi REST API (Hostinger shared hosting). Permanent data only: users, songs, saved words.
 // Dev: from the repo root run `php -S localhost:8080 api/index.php`, then hit http://localhost:8080/api/songs
 declare(strict_types=1);
+ini_set('display_errors', '0');   // warnings go to the log, never into JSON responses
 
 // .env: KEY=value lines, '#' comments. (parse_ini_file rejects '#' comments, so read it by hand.)
 $ENV = [];
@@ -17,8 +18,9 @@ $prefix = env('API_PREFIX', '/api');
 if (PHP_SAPI === 'cli-server' && str_starts_with($path, "$prefix/uploads/")) {
   $file = realpath(__DIR__ . substr($path, strlen($prefix)));
   if (!$file || !str_starts_with($file, realpath(__DIR__ . '/uploads')) || !is_file($file)) { http_response_code(404); exit; }
-  $types = ['json' => 'application/json', 'mp3' => 'audio/mpeg', 'ogg' => 'audio/ogg', 'opus' => 'audio/ogg',
-            'm4a' => 'audio/mp4', 'webm' => 'audio/webm', 'wav' => 'audio/wav'];
+  $types = ['json' => 'application/json', 'mp3' => 'audio/mpeg', 'ogg' => 'audio/ogg', 'oga' => 'audio/ogg', 'opus' => 'audio/ogg',
+            'm4a' => 'audio/mp4', 'mp4' => 'audio/mp4', 'aac' => 'audio/aac', 'webm' => 'audio/webm', 'weba' => 'audio/webm',
+            'wav' => 'audio/wav', 'flac' => 'audio/flac'];
   header('Content-Type: ' . ($types[strtolower(pathinfo($file, PATHINFO_EXTENSION))] ?? 'application/octet-stream'));
   header('Access-Control-Allow-Origin: *');
   header('Accept-Ranges: bytes');   // browsers can't seek audio without range support
@@ -107,6 +109,21 @@ function song_out(array $s): array {
           'duration_s' => (int)$s['duration_s'], 'published' => (bool)$s['published']];
 }
 
+// Audio uploads: up to MAX_AUDIO_MB each, any format phones and browsers can play.
+const MAX_AUDIO_MB = 20;
+const AUDIO_EXTS = ['mp3', 'm4a', 'aac', 'mp4', 'ogg', 'oga', 'opus', 'wav', 'webm', 'weba', 'flac'];
+// Sniffs the first bytes, so a renamed text or PHP file can't pose as audio.
+function looks_like_audio(string $path): bool {
+  $h = (string)file_get_contents($path, false, null, 0, 64);
+  if (strlen($h) < 12) return false;
+  return str_starts_with($h, 'ID3')                                          // mp3 with tags
+    || (ord($h[0]) === 0xFF && (ord($h[1]) & 0xE0) === 0xE0)                 // mp3 / aac (ADTS) frame sync
+    || str_starts_with($h, 'OggS') || str_starts_with($h, 'fLaC')            // ogg/opus, flac
+    || str_starts_with($h, "\x1A\x45\xDF\xA3")                               // webm / matroska
+    || (str_starts_with($h, 'RIFF') && substr($h, 8, 4) === 'WAVE')          // wav
+    || substr($h, 4, 4) === 'ftyp';                                          // m4a / mp4 / aac in mp4
+}
+
 // Mirrors validateLyrics() in app/src/lib/lyrics.js. Returns a list of problems (empty = valid).
 function validate_lyrics($d): array {
   if (!is_array($d) || !isset($d['lines']) || !is_array($d['lines']) || !array_is_list($d['lines']) || !$d['lines']) return ['"lines" must be a non-empty array'];
@@ -160,6 +177,21 @@ if ($route === '/auth/login' && $method === 'POST') {
   out(session_for($u));
 }
 
+// Guests (from a shared booth link): just a name, no database row. Good for 2 days.
+if ($route === '/auth/guest' && $method === 'POST') {
+  $name = trim(preg_replace('/[\x00-\x1F\x7F<>]/u', '', (string)(body()['name'] ?? '')));
+  if (mb_strlen($name) < 1 || mb_strlen($name) > 24) fail('Your name: 1-24 characters');
+  $id = 'g_' . bin2hex(random_bytes(6));
+  $user = ['id' => $id, 'username' => $name, 'role' => 'guest'];
+  out(['token' => jwt_sign(['sub' => $id, 'name' => $name, 'role' => 'guest', 'exp' => time() + 2 * 86400]), 'user' => $user]);
+}
+// Saved words belong to real accounts.
+function member_id(): int {
+  $c = auth();
+  if (($c['role'] ?? '') === 'guest') fail('Create a free account to save words', 403);
+  return (int)$c['sub'];
+}
+
 // ---- songs ----
 if ($route === '/songs' && $method === 'GET') {
   $all = isset($_GET['all']) && auth(true);
@@ -168,6 +200,9 @@ if ($route === '/songs' && $method === 'GET') {
 }
 if ($route === '/admin/songs' && $method === 'POST') {
   auth(true);
+  // PHP silently drops the whole body when it's over post_max_size; explain instead of "title is required".
+  $limit = (function (string $v): int { $n = (int)$v; return match (strtoupper(substr(trim($v), -1))) { 'G' => $n << 30, 'M' => $n << 20, 'K' => $n << 10, default => $n }; })((string)ini_get('post_max_size'));
+  if ($limit > 0 && (int)($_SERVER['CONTENT_LENGTH'] ?? 0) > $limit) fail('Upload is bigger than this server accepts (' . ini_get('post_max_size') . '). Try a smaller file.', 413);
   $id = (int)($_POST['id'] ?? 0);
   $title = trim((string)($_POST['title'] ?? ''));
   $level = (string)($_POST['level'] ?? 'N5');
@@ -185,20 +220,26 @@ if ($route === '/admin/songs' && $method === 'POST') {
   foreach (['audio' => 'Karaoke track', 'vocal' => 'Vocal track'] as $field => $label) {
     $f = $_FILES[$field] ?? null;
     if (!$f || $f['error'] === UPLOAD_ERR_NO_FILE) continue;
-    if ($f['error'] !== UPLOAD_ERR_OK) fail("$label upload failed (too big for the server?)");
-    if ($f['size'] > 3 * 1024 * 1024) fail("$label must be 3 MB or less (64 kbps MP3/Opus)");
+    if (in_array($f['error'], [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE], true)) fail("$label is bigger than the server allows");
+    if ($f['error'] !== UPLOAD_ERR_OK) fail("$label upload failed (error {$f['error']}), please try again");
+    if ($f['size'] > MAX_AUDIO_MB * 1024 * 1024) fail("$label must be " . MAX_AUDIO_MB . " MB or less");
     $ext = strtolower(pathinfo((string)$f['name'], PATHINFO_EXTENSION));
-    if (!in_array($ext, ['mp3', 'ogg', 'opus', 'm4a', 'webm', 'wav'], true)) fail("$label must be mp3, ogg/opus, m4a or webm");
+    if (!in_array($ext, AUDIO_EXTS, true)) fail("$label: .$ext isn't supported. Use " . implode(', ', AUDIO_EXTS));
+    if (!looks_like_audio($f['tmp_name'])) fail("$label doesn't look like an audio file");
     $files[$field] = [$f, $ext];
   }
-  if (!$id && (!isset($files['audio']) || !$lyrics)) fail('New songs need a karaoke track and lyrics');
+  $old = null;
+  if ($id) { $st = db()->prepare('SELECT * FROM songs WHERE id = ?'); $st->execute([$id]); $old = $st->fetch() ?: fail('Song not found', 404); }
+  if (!$id && !$files) fail('Choose an audio file for the new song');
+  // Drafts can be saved with just music; booths need both a karaoke track and lyrics, so publishing needs them.
+  if (!empty($_POST['published'])) {
+    if (!isset($files['audio']) && ($old['audio_url'] ?? '') === '') fail('Add a karaoke track (no vocals) before publishing');
+    if (!$lyrics && ($old['lyrics_url'] ?? '') === '') fail('Add lyrics before publishing');
+  }
 
   $fields = [$title, trim((string)($_POST['artist'] ?? '')), $level, max(0, min(1800, (int)($_POST['duration_s'] ?? 0))), (int)!empty($_POST['published'])];
   if ($id) {
-    $st = db()->prepare('UPDATE songs SET title = ?, artist = ?, level = ?, duration_s = ?, published = ? WHERE id = ?');
-    $st->execute([...$fields, $id]);
-    $chk = db()->prepare('SELECT id FROM songs WHERE id = ?'); $chk->execute([$id]);
-    if (!$chk->fetch()) fail('Song not found', 404);
+    db()->prepare('UPDATE songs SET title = ?, artist = ?, level = ?, duration_s = ?, published = ? WHERE id = ?')->execute([...$fields, $id]);
   } else {
     db()->prepare('INSERT INTO songs (title, artist, level, duration_s, published) VALUES (?, ?, ?, ?, ?)')->execute($fields);
     $id = (int)db()->lastInsertId();
@@ -210,6 +251,8 @@ if ($route === '/admin/songs' && $method === 'POST') {
     if (!move_uploaded_file($f['tmp_name'], __DIR__ . "/$rel")) fail('Could not store audio', 500);
     $col = $field === 'vocal' ? 'vocal_url' : 'audio_url';
     db()->prepare("UPDATE songs SET $col = ? WHERE id = ?")->execute([$rel, $id]);
+    $prev = (string)($old[$col] ?? '');
+    if (str_starts_with($prev, 'uploads/audio/')) @unlink(__DIR__ . '/' . $prev);   // replaced: free the disk space
   }
   if ($lyrics) {
     @mkdir(__DIR__ . '/uploads/lyrics', 0755, true);
@@ -221,9 +264,22 @@ if ($route === '/admin/songs' && $method === 'POST') {
   out(song_out($st->fetch()));
 }
 
+// Delete a song and its uploaded files. Saved words keep their text (song_id becomes NULL via the foreign key).
+if (preg_match('#^/admin/songs/(\d+)$#', $route, $m) && $method === 'DELETE') {
+  auth(true);
+  $st = db()->prepare('SELECT * FROM songs WHERE id = ?'); $st->execute([(int)$m[1]]);
+  $song = $st->fetch() ?: fail('Song not found', 404);
+  db()->prepare('DELETE FROM songs WHERE id = ?')->execute([(int)$m[1]]);
+  foreach (['audio_url', 'vocal_url', 'lyrics_url'] as $col) {
+    $rel = preg_replace('/\?.*$/', '', (string)$song[$col]);
+    if (preg_match('#^uploads/(audio|lyrics)/[\w.-]+$#', $rel)) @unlink(__DIR__ . '/' . $rel);   // never the sample folder
+  }
+  out(['ok' => true]);
+}
+
 // ---- saved words ----
 if ($route === '/words') {
-  $me = (int)auth()['sub'];
+  $me = member_id();
   if ($method === 'GET') {
     $st = db()->prepare('SELECT * FROM saved_words WHERE user_id = ? ORDER BY known ASC, created_at DESC'); $st->execute([$me]);
     out(array_map(fn($w) => [...$w, 'id' => (int)$w['id'], 'known' => (bool)$w['known'], 'song_id' => $w['song_id'] === null ? null : (int)$w['song_id']], $st->fetchAll()));
@@ -248,7 +304,7 @@ if ($route === '/words') {
   }
 }
 if (preg_match('#^/words/(\d+)$#', $route, $m)) {
-  $me = (int)auth()['sub'];
+  $me = member_id();
   if ($method === 'PATCH') {
     db()->prepare('UPDATE saved_words SET known = ? WHERE id = ? AND user_id = ?')->execute([(int)!empty(body()['known']), (int)$m[1], $me]);
     out(['ok' => true]);

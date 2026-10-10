@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
@@ -11,7 +11,7 @@ import { c } from '../../lib/theme';
 // Songbook player: listen alone before singing. "With vocals" to learn the song, "Karaoke" to practise over the backing.
 export default function Song() {
   const { id } = useLocalSearchParams();
-  const { songs } = useSession();
+  const { songs, loadSongs } = useSession();
   const song = songs.find((s) => String(s.id) === String(id));
   const [mode, setMode] = useState('vocal');   // 'vocal' falls back to karaoke when a song has no vocal track
   // Source fixed per song; switching vocals/karaoke uses replace() so the player (and position) survives.
@@ -26,15 +26,28 @@ export default function Song() {
   const [barW, setBarW] = useState(1);
 
   useEffect(() => { if (song) loadLyrics(song.lyrics_url).then(setLyrics).catch(() => setMsg('Could not load the lyrics')); }, [song?.lyrics_url]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (!songs.some((s) => String(s.id) === String(id))) loadSongs(); }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { api('/words').then((ws) => setSaved(new Set(ws.map((w) => w.word)))).catch(() => {}); }, []);
 
   // Switching vocals ↔ karaoke keeps your place in the song.
+  // Waits until the new track has really loaded (slow networks) before seeking, then resumes.
+  const switching = useRef(0);
   const switchMode = (m) => {
     if (m === mode || !song) return;
     const at = player.currentTime, wasPlaying = player.playing;
+    player.pause();
     setMode(m);
     player.replace((m === 'vocal' && song.vocal_url) || song.audio_url);
-    setTimeout(() => { player.seekTo(at); if (wasPlaying) player.play(); }, 300);
+    const id = ++switching.current;
+    const settle = async (tries) => {
+      if (id !== switching.current || tries > 60) return;   // superseded, or give up after ~9 s
+      if (player.isLoaded && player.duration > 0) {
+        await player.seekTo(at).catch(() => {});
+        if (Math.abs(player.currentTime - at) < 1) { if (wasPlaying) player.play(); return; }
+      }
+      setTimeout(() => settle(tries + 1), 150);
+    };
+    setTimeout(() => settle(0), 150);
   };
 
   const lines = lyrics?.lines || [];

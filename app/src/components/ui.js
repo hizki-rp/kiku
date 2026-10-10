@@ -13,6 +13,7 @@ const ICONS = {
   micOff: <><Path d="M3 3l18 18" /><Path d="M9 9v2a3 3 0 0 0 5.1 2.1" /><Path d="M15 10V5a3 3 0 0 0-5.9-.8" /><Path d="M19 11a7 7 0 0 1-1.2 3.9" /><Path d="M5 11a7 7 0 0 0 10.7 6" /><Path d="M12 18v4" /></>,
   // handheld karaoke microphone
   microphone: <><Circle cx="15.5" cy="8.5" r="5" /><Path d="M12 5l7 7" /><Path d="M12 12l-7.3 7.3a1.4 1.4 0 0 1-2-2L10 10" /></>,
+  share: <><Path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7" /><Path d="M16 6l-4-4-4 4" /><Path d="M12 2v13" /></>,
   headphones: <><Path d="M3 18v-6a9 9 0 0 1 18 0v6" /><Rect x="3" y="14" width="4" height="7" rx="1.5" /><Rect x="17" y="14" width="4" height="7" rx="1.5" /></>,
   booths: <><Path d="M3 10l9-6 9 6" /><Path d="M5 9v11h14V9" /><Path d="M10 20v-6h4v6" /></>,
   songbook: <><Path d="M9 18V5l12-2v13" /><Circle cx="6" cy="18" r="3" /><Circle cx="18" cy="16" r="3" /></>,
@@ -217,12 +218,14 @@ export function LyricLine({ line, state, sung = 0, showRuby, showTr, isSelected,
 }
 
 // Lyric screen: toggles + previous / current / next line. Shared by booths and the Songbook player.
-export function LyricPanel({ lines, cur, sung, showRuby, onRuby, showTr, onTr, selKey, onPick, emptyText }) {
+// extra: more toggles shown before Furigana/English, e.g. [{ label: 'Vocals', on, onPress }].
+export function LyricPanel({ lines, cur, sung, showRuby, onRuby, showTr, onTr, selKey, onPick, emptyText, extra = [] }) {
   const shown = cur < 0 ? [] : [cur - 1, cur, cur + 1].filter((i) => i >= 0 && i < lines.length);
   return (
     <View style={{ marginTop: 14, marginHorizontal: 16, backgroundColor: c.lyricBg, borderWidth: 1, borderColor: c.border, borderRadius: 20,
       paddingTop: 14, paddingHorizontal: 14, paddingBottom: 16, gap: 12 }}>
       <View style={{ flexDirection: 'row', gap: 8, justifyContent: 'flex-end' }}>
+        {extra.map((x) => <Toggle key={x.label} label={x.label} on={x.on} onPress={x.onPress} />)}
         <Toggle label="Furigana" on={showRuby} onPress={onRuby} />
         <Toggle label="English" on={showTr} onPress={onTr} />
       </View>

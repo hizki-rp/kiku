@@ -31,7 +31,7 @@ if (Platform.OS === 'web' && typeof document !== 'undefined' && !document.getEle
 function Gate() {
   const { ready, user, status, everConnected } = useSession();
   const path = usePathname();
-  useEffect(() => { if (ready && !user && path !== '/login') router.replace('/login'); }, [ready, user, path]);
+  useEffect(() => { if (ready && !user && path !== '/login' && !path.startsWith('/join')) router.replace('/login'); }, [ready, user, path]);
   const showLamp = user && !everConnected && path !== '/admin';
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>

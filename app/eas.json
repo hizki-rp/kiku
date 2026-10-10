@@ -5,15 +5,15 @@
       "distribution": "internal",
       "android": { "buildType": "apk" },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://YOUR-DOMAIN/api",
-        "EXPO_PUBLIC_SOCKET_URL": "https://YOUR-RENDER-SERVICE.onrender.com"
+        "EXPO_PUBLIC_API_URL": "https://powderblue-bear-482743.hostingersite.com/api",
+        "EXPO_PUBLIC_SOCKET_URL": "https://kiku-0r7v.onrender.com"
       }
     },
     "production": {
       "android": { "buildType": "app-bundle" },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://YOUR-DOMAIN/api",
-        "EXPO_PUBLIC_SOCKET_URL": "https://YOUR-RENDER-SERVICE.onrender.com"
+        "EXPO_PUBLIC_API_URL": "https://powderblue-bear-482743.hostingersite.com/api",
+        "EXPO_PUBLIC_SOCKET_URL": "https://kiku-0r7v.onrender.com"
       }
     }
   }

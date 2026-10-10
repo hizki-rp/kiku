@@ -14,7 +14,7 @@ export default function Me() {
           <Avatar name={user?.username} first color={c.accent} size={52} />
           <View>
             <T size={18} weight={800}>{user?.username}</T>
-            <T size={13} color={c.muted}>{user?.role === 'admin' ? 'Admin · keeper of the songbook' : 'Regular at the booths'}</T>
+            <T size={13} color={c.muted}>{user?.role === 'admin' ? 'Admin · keeper of the songbook' : user?.role === 'guest' ? 'Guest · joined from a link' : 'Regular at the booths'}</T>
           </View>
         </View>
         {user?.role === 'admin' ? (
@@ -22,7 +22,8 @@ export default function Me() {
             ? <Button kind="white" label="Open admin songbook" icon="songbook" onPress={() => router.push('/admin')} />
             : <T size={13} color={c.muted}>The admin songbook is on the web app at /admin.</T>
         ) : null}
-        <Button kind="ghost" label="Sign out" onPress={signOut} />
+        {user?.role === 'guest' ? <Button label="Create a free account" onPress={signOut} /> : null}
+        <Button kind="ghost" label={user?.role === 'guest' ? 'Leave' : 'Sign out'} onPress={signOut} />
       </View>
       <BottomNav />
     </Screen>

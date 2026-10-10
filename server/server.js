@@ -44,7 +44,7 @@ const summary = (r) => ({
   nowTitle: r.now?.title || null, nowSinger: r.now?.singerName || null,
 });
 const roomState = (r) => ({
-  ...summary(r), hostId: r.hostId,
+  ...summary(r), hostId: r.hostId, invite: r.invite,   // members only: lets them share a skip-the-knock link
   members: [...r.members.values()].map((m) => ({ id: m.id, name: m.name, online: !!m.socketId, voice: !!m.voice, muted: !!m.muted })),
   queue: r.queue, now: r.now, chat: r.chat,
 });
@@ -105,7 +105,7 @@ function advance(r, reason) {
   if (r.now) io.to(r.id).emit('song_skipped', { songId: r.now.songId, reason });
   const next = r.queue.shift();
   r.now = next ? { songId: next.songId, title: next.title, singerId: next.userId, singerName: next.name,
-                   durationS: next.durationS, startedAt: Date.now() + 1500, pausedAt: null } : null;
+                   durationS: next.durationS, vocals: next.vocals, startedAt: Date.now() + 1500, pausedAt: null } : null;
   // startedAt is 1.5 s in the future so every client has time to load before the first note.
   if (r.now) io.to(r.id).emit('song_started', { songId: r.now.songId, startedAt: r.now.startedAt });
   scheduleEnd(r);
@@ -150,7 +150,7 @@ io.on('connection', (socket) => {
       id: crypto.randomBytes(4).toString('hex'), name,
       color: /^#[0-9a-fA-F]{6}$/.test(d.color) ? d.color : '#E11D2B',
       level: LEVELS.includes(d.level) ? d.level : 'Any',
-      knock: d.knock !== false, hostId: me.id,
+      knock: d.knock !== false, hostId: me.id, invite: crypto.randomBytes(4).toString('hex').slice(0, 6),
       members: new Map(), knocks: new Map(), queue: [], now: null, chat: [], endTimer: null,
     };
     rooms.set(r.id, r);
@@ -162,7 +162,8 @@ io.on('connection', (socket) => {
   on('request_entry', (d, reply) => {
     const r = roomFor(d, reply, { member: false });
     if (!r) return;
-    if (r.members.has(me.id) || !r.knock) {   // rejoin after a drop, or open-door booth
+    const invited = typeof d.invite === 'string' && d.invite === r.invite;
+    if (r.members.has(me.id) || !r.knock || invited) {   // rejoin after a drop, open-door booth, or a shared invite link
       if (!r.members.has(me.id) && r.members.size >= MAX_MEMBERS) return reply({ error: 'This booth is full' });
       addMember(r, me, socket.id);
       broadcast(r, true);
@@ -249,7 +250,8 @@ io.on('connection', (socket) => {
     if (!Number.isInteger(songId) || songId <= 0) return reply({ error: 'Pick a song' });
     if (r.queue.some((q) => q.userId === me.id)) return reply({ error: 'You are already in line' });
     r.queue.push({ userId: me.id, name: me.name, songId, title: String(s.title || '').slice(0, 120),
-                   durationS: Math.min(1800, Math.max(0, Number(s.duration_s) || 0)) });
+                   durationS: Math.min(1800, Math.max(0, Number(s.duration_s) || 0)),
+                   vocals: !!s.vocals });   // singer's choice: original with vocals, or karaoke backing only
     if (!r.now) advance(r, 'queued'); else broadcast(r, false);
     reply({ ok: true });
   });

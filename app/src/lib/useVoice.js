@@ -27,7 +27,8 @@ if (process.env.EXPO_PUBLIC_TURN_URL) {
 const plainDesc = (d) => ({ type: d.type, sdp: d.sdp });
 const plainCand = (c) => ({ candidate: c.candidate, sdpMid: c.sdpMid, sdpMLineIndex: c.sdpMLineIndex });
 
-export function useVoice(roomId, emit, subscribe) {
+// serverSaysOn: my member.voice flag from room_state (undefined while unknown).
+export function useVoice(roomId, emit, subscribe, serverSaysOn) {
   const [state, setState] = useState('off');   // off | joining | on
   const [muted, setMuted] = useState(false);
   const [error, setError] = useState('');
@@ -100,6 +101,16 @@ export function useVoice(roomId, emit, subscribe) {
     setState('off'); setMuted(false);
   }, [drop]);
 
+  // Tell the server we're on voice and call everyone already there.
+  const announce = useCallback(async () => {
+    const { peers: others } = await emit('voice_join', { roomId });
+    for (const id of others) {
+      const p = peer(id);
+      await p.pc.setLocalDescription(await p.pc.createOffer());
+      send(id, { sdp: plainDesc(p.pc.localDescription) });
+    }
+  }, [emit, roomId, peer, send]);
+
   const join = useCallback(async () => {
     if (!VOICE_SUPPORTED) { setError('Voice chat needs the Tomoshibi app or the web version (not Expo Go)'); return false; }
     if (state !== 'off') return true;
@@ -110,13 +121,8 @@ export function useVoice(roomId, emit, subscribe) {
         : { audio: true });
       // 'video' mode = loudspeaker by default (Android's 'audio' mode uses the earpiece), still switching to headphones/Bluetooth.
       InCall?.start({ media: 'video', auto: true });
-      const { peers: others } = await emit('voice_join', { roomId });
+      await announce();
       setState('on');
-      for (const id of others) {
-        const p = peer(id);
-        await p.pc.setLocalDescription(await p.pc.createOffer());
-        send(id, { sdp: plainDesc(p.pc.localDescription) });
-      }
       return true;
     } catch (e) {
       stop();
@@ -124,7 +130,7 @@ export function useVoice(roomId, emit, subscribe) {
       setError(denied ? 'Microphone is blocked — allow it in settings to be heard' : e?.message || 'Could not start voice');
       return false;
     }
-  }, [state, emit, roomId, peer, send, stop]);
+  }, [state, roomId, announce, stop]);
 
   const leave = useCallback(() => { stop(); emit('voice_leave', { roomId }).catch(() => {}); }, [stop, emit, roomId]);
 
@@ -135,8 +141,22 @@ export function useVoice(roomId, emit, subscribe) {
     emit('voice_mute', { roomId, muted: next }).catch(() => {});
   }, [muted, emit, roomId]);
 
+  // After a dropped connection the server re-seats us with voice off, while we still hold the mic.
+  // If that mismatch lasts, quietly redial everyone (keeping the mic and the mute state).
+  useEffect(() => {
+    if (state !== 'on' || serverSaysOn !== false) return;
+    const t = setTimeout(async () => {
+      for (const id of [...peers.current.keys()]) drop(id);
+      try {
+        await announce();
+        if (muted) emit('voice_mute', { roomId, muted: true }).catch(() => {});
+      } catch { /* still offline: the next room_state retries */ }
+    }, 1500);
+    return () => clearTimeout(t);
+  }, [state, serverSaysOn]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => stop, [roomId, stop]);   // leaving the booth hangs up
-  if (__DEV__ && Platform.OS === 'web') window.__voicePeers = peers.current;
+  if (Platform.OS === 'web') window.__voicePeers = peers.current;   // debug handle for tests and devtools
 
   return { state, muted, error, join, leave, toggleMute };
 }

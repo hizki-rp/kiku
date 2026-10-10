@@ -7,7 +7,7 @@ import { c } from '../../lib/theme';
 
 // Knock · waiting room. Admission comes from the host via the server.
 export default function Knock() {
-  const { id } = useLocalSearchParams();
+  const { id, code } = useLocalSearchParams();   // code: invite from a shared link, skips the knock
   const { emit, enterRoom, rooms, notice, setNotice, status } = useSession();
   const [phase, setPhase] = useState('knocking');   // knocking | waiting | approved | declined | closed
   const [err, setErr] = useState('');
@@ -17,13 +17,13 @@ export default function Knock() {
 
   useEffect(() => {
     if (status !== 'online' || phaseRef.current !== 'knocking') return;
-    emit('request_entry', { roomId: id })
+    emit('request_entry', { roomId: id, invite: code })
       .then((r) => {
         if (r.status === 'inside') { enterRoom(r.room); router.replace(`/room/${id}`); }
         else setPhase('waiting');
       })
       .catch((e) => { setErr(e.message); setPhase('closed'); });
-  }, [id, status, emit, enterRoom]);
+  }, [id, code, status, emit, enterRoom]);
 
   useEffect(() => {
     if (notice?.roomId !== id) return;

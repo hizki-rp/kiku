@@ -1,24 +1,27 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
-import { api } from '../lib/session';
+import { api, useSession } from '../lib/session';
 import { BottomNav, Button, Empty, Icon, Scroll, Screen, Section, T } from '../components/ui';
 import { c } from '../lib/theme';
 
 // Words · flashcards from saved words
 export default function Words() {
+  const { user, signOut } = useSession();
+  const guest = user?.role === 'guest';
   const [words, setWords] = useState(null);
   const [deck, setDeck] = useState([]);       // ids of words still being learned, in review order
   const [flipped, setFlipped] = useState(false);
   const [err, setErr] = useState('');
 
   const load = useCallback(() => {
+    if (guest) return;
     api('/words').then((ws) => {
       setWords(ws);
       setDeck(ws.filter((w) => !w.known).map((w) => w.id));
       setFlipped(false);
     }).catch((e) => setErr(e.message));
-  }, []);
+  }, [guest]);
   useFocusEffect(load);
 
   const card = words?.find((w) => w.id === deck[0]);
@@ -38,7 +41,12 @@ export default function Words() {
       </View>
       <Scroll>
         {err ? <T size={13} color={c.accentSoft}>{err}</T> : null}
-        {card ? (
+        {guest ? (
+          <>
+            <Empty title="Keep the words you learn" sub="Guests can look words up in booths. Make a free account to save them as flashcards." />
+            <Button label="Create a free account" onPress={signOut} />
+          </>
+        ) : card ? (
           <>
             <Pressable onPress={() => setFlipped(!flipped)} accessibilityRole="button" accessibilityHint="Flip card"
               style={{ minHeight: 260, borderRadius: 24, padding: 24, alignItems: 'center', justifyContent: 'center', gap: 8,

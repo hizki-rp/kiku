@@ -41,8 +41,10 @@ const once = (s, ev) => within(new Promise((res) => s.once(ev, res)), `event ${e
   assert.equal((await chat).text, '灯り = akari');
 
   const started = once(host, 'song_started');
-  await emit(guest, 'join_queue', { roomId: room.id, song: { id: 1, title: 'Yoru', duration_s: 48 } });
+  const state = once(host, 'room_state');
+  await emit(guest, 'join_queue', { roomId: room.id, song: { id: 1, title: 'Yoru', duration_s: 48, vocals: true } });
   const s = await started;
+  assert.equal((await state).now.vocals, true);   // the singer's vocals choice reaches everyone
   assert.equal(s.songId, 1);
   assert.ok(s.startedAt > Date.now());
 
@@ -59,6 +61,15 @@ const once = (s, ev) => within(new Promise((res) => s.once(ev, res)), `event ${e
   const left = once(host, 'voice_left');
   await emit(guest, 'voice_leave', { roomId: room.id });
   assert.equal((await left).userId, '2');
+
+  // invite link: a third person with the room's code walks straight in, a wrong code still knocks
+  const third = connect(token(3, 'Mika'));
+  await once(third, 'connect');
+  assert.equal((await emit(third, 'request_entry', { roomId: room.id, invite: 'nope' })).status, 'waiting');
+  await emit(third, 'cancel_entry', { roomId: room.id });
+  assert.equal((await emit(third, 'request_entry', { roomId: room.id, invite: room.invite })).status, 'inside');
+  assert.ok(room.invite && room.invite.length === 6);
+  third.close();
 
   const removed = once(guest, 'removed');
   await emit(host, 'remove_member', { roomId: room.id, userId: '2' });

@@ -9,7 +9,8 @@ export function loadLyrics(url) {
 
 // Drives local audio from the server's { startedAt | pausedAt } and returns the lyric clock.
 // The server never streams anything: every client downloads the audio + lyrics and seeks itself.
-export function usePlayback(now, song, serverNow) {
+// vocals: play the original (vocal_url) instead of the karaoke backing; falls back if the song has no vocal track.
+export function usePlayback(now, song, serverNow, vocals = false) {
   const player = useAudioPlayer(null, { updateInterval: 200 });
   const status = useAudioPlayerStatus(player);
   const [lyrics, setLyrics] = useState(null);
@@ -17,14 +18,20 @@ export function usePlayback(now, song, serverNow) {
 
   const expected = () => (!now ? 0 : now.pausedAt != null ? now.pausedAt : (serverNow() - now.startedAt) / 1000);
 
+  const url = song ? (vocals && song.vocal_url) || song.audio_url : null;
   useEffect(() => {
     setLyrics(null);
-    if (!song) { player.pause(); return; }
-    player.replace(song.audio_url);
+    if (!song) return;
     let live = true;
     loadLyrics(song.lyrics_url).then((d) => live && setLyrics(d)).catch(() => {});
     return () => { live = false; };
   }, [song?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Swapping vocals <-> karaoke mid-song just replaces the source; the sync loop below seeks back into place.
+  useEffect(() => {
+    if (!url) { player.pause(); return; }
+    player.replace(url);
+  }, [url]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!now || !song || !status.isLoaded) return;
@@ -42,7 +49,7 @@ export function usePlayback(now, song, serverNow) {
     sync();
     const iv = setInterval(sync, 1000);
     return () => clearInterval(iv);
-  }, [now?.startedAt, now?.pausedAt, song?.id, status.isLoaded]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [now?.startedAt, now?.pausedAt, url, status.isLoaded]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // When audio isn't running (still loading, or the browser blocked autoplay) keep lyrics moving on the shared clock.
   const audioDriving = status.playing;

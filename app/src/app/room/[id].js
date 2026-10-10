@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
-import { FlatList, KeyboardAvoidingView, Modal, Platform, Pressable, TextInput, View } from 'react-native';
+import { FlatList, KeyboardAvoidingView, Modal, Platform, Pressable, Share, TextInput, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { api, useSession } from '../../lib/session';
+import { api, SITE_URL, useSession } from '../../lib/session';
 import { usePlayback } from '../../lib/usePlayback';
 import { useVoice } from '../../lib/useVoice';
 import { lyricAt, mmss } from '../../lib/lyrics';
-import { AvatarStack, Button, DiscoLights, Empty, Icon, LyricPanel, MeaningCard, Screen, T, Tag, TopBar } from '../../components/ui';
+import { AvatarStack, Button, Chip, DiscoLights, Empty, Icon, LyricPanel, MeaningCard, Screen, T, Tag, TopBar } from '../../components/ui';
 import { c, font } from '../../lib/theme';
 
 const ordinal = (n) => n + (['th', 'st', 'nd', 'rd'][(n % 100 > 10 && n % 100 < 14) || n % 10 > 3 ? 0 : n % 10]);
@@ -14,7 +14,7 @@ const REACTIONS = ['Nice!', 'Encore', 'Clap'];
 // Room · in the booth. Matches design-export/Room.dc.html, plus voice chat and disco lights.
 export default function Room() {
   const { id } = useLocalSearchParams();
-  const { user, room, feed, knocks, songs, emit, subscribe, leaveRoom, serverNow, notice, setNotice } = useSession();
+  const { user, room, feed, knocks, songs, loadSongs, emit, subscribe, leaveRoom, serverNow, notice, setNotice } = useSession();
   const [gone, setGone] = useState(null);
   const [showTr, setShowTr] = useState(true);
   const [showRuby, setShowRuby] = useState(true);
@@ -23,11 +23,15 @@ export default function Room() {
   const [msg, setMsg] = useState('');
   const [picking, setPicking] = useState(false);
   const [toast, setToast] = useState('');
+  const [pickVocals, setPickVocals] = useState(true);         // picker choice: sing along with the original, or karaoke
+  const [myVocals, setMyVocals] = useState(null);             // listener's own override; null = follow the singer's choice
 
   const now = room?.id === id ? room.now : null;
   const song = useMemo(() => songs.find((s) => s.id === now?.songId) || null, [songs, now?.songId]);
-  const { t, duration, lyrics, blocked, play } = usePlayback(now, song, serverNow);
-  const voice = useVoice(id, emit, subscribe);
+  const vocalsOn = !!song?.vocal_url && (myVocals ?? !!now?.vocals);
+  const { t, duration, lyrics, blocked, play } = usePlayback(now, song, serverNow, vocalsOn);
+  const myVoice = room?.id === id ? room.members.find((m) => m.id === String(user.id))?.voice : undefined;
+  const voice = useVoice(id, emit, subscribe, myVoice);
   const lines = lyrics?.lines || [];
   const { cur, sung } = lyricAt(lines, t);
 
@@ -37,6 +41,7 @@ export default function Room() {
   useEffect(() => { if (!gone && room?.id !== id) router.replace(`/knock/${id}`); }, [room?.id, id, gone]);
   useEffect(() => { api('/words').then((ws) => setSaved(new Set(ws.map((w) => w.word)))).catch(() => {}); }, []);
   useEffect(() => { if (voice.error) setToast(voice.error); }, [voice.error]);
+  useEffect(() => { setMyVocals(null); }, [now?.songId, now?.singerId]);   // each new song starts with the singer's choice
   useEffect(() => { if (!toast) return; const tm = setTimeout(() => setToast(''), 3000); return () => clearTimeout(tm); }, [toast]);
 
   if (gone) {
@@ -70,6 +75,7 @@ export default function Room() {
   const raise = () => {
     if (onMic) return;
     if (qIdx >= 0) return emit('leave_queue', { roomId: id }).catch((e) => setToast(e.message));
+    loadSongs();   // songs added since login show up
     setPicking(true);
   };
   const pickSong = (s) => {
@@ -77,7 +83,18 @@ export default function Room() {
     // Singing means being heard: queuing also opens your microphone (this tap is the user gesture browsers want).
     if (voice.state === 'off') voice.join();
     else if (voice.muted) voice.toggleMute();
-    emit('join_queue', { roomId: id, song: { id: s.id, title: s.title, duration_s: s.duration_s } }).catch((e) => setToast(e.message));
+    emit('join_queue', { roomId: id, song: { id: s.id, title: s.title, duration_s: s.duration_s, vocals: pickVocals && !!s.vocal_url } }).catch((e) => setToast(e.message));
+  };
+  // Invite link: anyone with it types a name and walks straight in (the code skips the knock).
+  const share = async () => {
+    const link = `${SITE_URL}/join/${id}${room.invite ? `?code=${room.invite}` : ''}`;
+    const text = `Come sing with me in "${room.name}" on Tomoshibi`;
+    try {
+      if (Platform.OS !== 'web') return void (await Share.share({ message: `${text}: ${link}` }));
+      if (navigator.share) return void (await navigator.share({ title: 'Tomoshibi', text, url: link }));
+      await navigator.clipboard.writeText(link);
+      setToast('Invite link copied — paste it to a friend');
+    } catch { /* share sheet dismissed */ }
   };
   const voiceTap = () => (voice.state === 'off' ? voice.join() : voice.toggleMute());
   const save = async () => {
@@ -100,6 +117,11 @@ export default function Room() {
       <KeyboardAvoidingView behavior={Platform.OS === 'web' ? undefined : 'padding'} style={{ flex: 1 }}>
         <TopBar title={room.name} sub={`${room.count} inside · host ${room.hostName}${onVoice ? ` · ${onVoice} on voice` : ''}`} onBack={leave}
           right={
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+            <Pressable onPress={share} accessibilityRole="button" accessibilityLabel="Share invite link"
+              style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}>
+              <Icon name="share" size={20} />
+            </Pressable>
             <Pressable onPress={isHost ? () => router.push(`/host/${id}`) : undefined} disabled={!isHost}
               accessibilityLabel={isHost ? `Host panel${knocks.length ? `, ${knocks.length} knocking` : ''}` : 'People inside'}
               style={{ minHeight: 44, justifyContent: 'center' }}>
@@ -110,6 +132,7 @@ export default function Room() {
                 </View>
               ) : null}
             </Pressable>
+            </View>
           } />
 
         {/* now playing */}
@@ -130,7 +153,8 @@ export default function Room() {
 
         <LyricPanel lines={lines} cur={cur} sung={sung} showRuby={showRuby} onRuby={() => setShowRuby(!showRuby)} showTr={showTr} onTr={() => setShowTr(!showTr)}
           selKey={word?.key} onPick={(li, wi) => setSel({ key: `${li}-${wi}`, word: lines[li].words[wi], line: lines[li] })}
-          emptyText={now ? 'Warming up the words…' : 'Tap “Sing next”, pick a song, and the words will glow here.'} />
+          emptyText={now ? 'Warming up the words…' : 'Tap “Sing next”, pick a song, and the words will glow here.'}
+          extra={song?.vocal_url ? [{ label: 'Vocals', on: vocalsOn, onPress: () => setMyVocals(!vocalsOn) }] : []} />
 
         {word ? <MeaningCard word={word.word} saved={saved.has(word.word.t)} onSave={save} /> : null}
 
@@ -175,17 +199,24 @@ export default function Room() {
 
       <Modal visible={picking} transparent animationType="slide" onRequestClose={() => setPicking(false)}>
         <Pressable style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.6)' }} onPress={() => setPicking(false)} />
-        <View style={{ maxHeight: '70%', backgroundColor: c.surface, borderTopLeftRadius: 24, borderTopRightRadius: 24, borderWidth: 1, borderColor: c.border, padding: 16, gap: 12, width: '100%', maxWidth: 480, alignSelf: 'center' }}>
+        <View style={{ maxHeight: '75%', flexShrink: 1, backgroundColor: c.surface, borderTopLeftRadius: 24, borderTopRightRadius: 24, borderWidth: 1, borderColor: c.border, padding: 16, paddingBottom: 28, gap: 12, width: '100%', maxWidth: 480, alignSelf: 'center' }}>
           <T size={18} weight={800}>Pick your song</T>
-          <T size={12} color={c.muted}>Plays the karaoke track (no vocals). Your microphone opens so the booth can hear you — headphones stop echo.</T>
-          <FlatList data={songs} keyExtractor={(s) => String(s.id)} contentContainerStyle={{ gap: 8 }}
+          <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
+            <Chip label="With vocals · sing along" on={pickVocals} onPress={() => setPickVocals(true)} />
+            <Chip label="Karaoke · no vocals" on={!pickVocals} onPress={() => setPickVocals(false)} />
+          </View>
+          <T size={12} color={c.muted}>
+            {pickVocals ? 'Everyone hears the original singer with you: great for learning a new song.' : 'Just the backing track: you are the singer.'}
+            {' '}Your microphone opens so the booth can hear you; headphones stop echo. Anyone can flip Vocals for themselves.
+          </T>
+          <FlatList data={songs} keyExtractor={(s) => String(s.id)} style={{ flexShrink: 1 }} contentContainerStyle={{ gap: 8 }}
             ListEmptyComponent={<Empty title="The songbook is empty" sub="An admin needs to add songs first." />}
             renderItem={({ item }) => (
               <Pressable onPress={() => pickSong(item)} accessibilityRole="button"
                 style={{ minHeight: 56, borderRadius: 16, backgroundColor: c.surface2, borderWidth: 1, borderColor: c.border, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                 <View style={{ flex: 1, minWidth: 0 }}>
                   <T size={15} weight={700} numberOfLines={1}>{item.title}</T>
-                  <T size={12} color={c.muted} numberOfLines={1}>{item.artist} · {mmss(item.duration_s)}</T>
+                  <T size={12} color={c.muted} numberOfLines={1}>{[item.artist, mmss(item.duration_s), pickVocals && !item.vocal_url ? 'karaoke only' : ''].filter(Boolean).join(" · ")}</T>
                 </View>
                 <Tag>{item.level}</Tag>
               </Pressable>
