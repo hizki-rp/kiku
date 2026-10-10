@@ -1,65 +1,365 @@
 {
   "songId": 0,
   "lines": [
-    { "line": 1, "start": 4.0, "end": 8.0, "jp": "雨の中で 一人立つ", "en": "I stand alone in the rain",
+    {
+      "line": 1,
+      "start": 4,
+      "end": 7.05,
+      "jp": "雨の中で 一人立つ",
+      "en": "I stand alone in the rain",
       "words": [
-        { "t": "雨", "reading": "あめ", "romaji": "ame", "meaning": "rain", "note": "Noun." },
-        { "t": "の", "reading": "の", "romaji": "no", "meaning": "of / 's", "note": "雨の中 = in the middle of the rain." },
-        { "t": "中", "reading": "なか", "romaji": "naka", "meaning": "inside, middle", "note": "Noun." },
-        { "t": "で", "reading": "で", "romaji": "de", "meaning": "in / at", "note": "Particle: where an action happens." },
-        { "t": "一人", "reading": "ひとり", "romaji": "hitori", "meaning": "alone, one person", "note": "Special reading: 一 + 人 = ひとり." },
-        { "t": "立つ", "reading": "たつ", "romaji": "tatsu", "meaning": "to stand", "note": "Verb, dictionary form." }
-      ] },
-    { "line": 2, "start": 8.8, "end": 12.8, "jp": "負けた日も 忘れない", "en": "I won't forget even the days I lost",
+        {
+          "t": "雨",
+          "reading": "あめ",
+          "romaji": "ame",
+          "meaning": "rain",
+          "note": "Noun.",
+          "start": 4
+        },
+        {
+          "t": "の",
+          "reading": "の",
+          "romaji": "no",
+          "meaning": "of / 's",
+          "note": "雨の中 = in the middle of the rain.",
+          "start": 4.41
+        },
+        {
+          "t": "中",
+          "reading": "なか",
+          "romaji": "naka",
+          "meaning": "inside, middle",
+          "note": "Noun.",
+          "start": 4.6
+        },
+        {
+          "t": "で",
+          "reading": "で",
+          "romaji": "de",
+          "meaning": "in / at",
+          "note": "Particle: where an action happens.",
+          "start": 5
+        },
+        {
+          "t": "一人",
+          "reading": "ひとり",
+          "romaji": "hitori",
+          "meaning": "alone, one person",
+          "note": "Special reading: 一 + 人 = ひとり.",
+          "start": 5.15
+        },
+        {
+          "t": "立つ",
+          "reading": "たつ",
+          "romaji": "tatsu",
+          "meaning": "to stand",
+          "note": "Verb, dictionary form.",
+          "start": 5.7
+        }
+      ]
+    },
+    {
+      "line": 2,
+      "start": 8.8,
+      "end": 11.63,
+      "jp": "負けた日も 忘れない",
+      "en": "I won't forget even the days I lost",
       "words": [
-        { "t": "負けた", "reading": "まけた", "romaji": "maketa", "meaning": "lost (a fight)", "note": "Past of 負ける (makeru, to lose)." },
-        { "t": "日", "reading": "ひ", "romaji": "hi", "meaning": "day", "note": "負けた日 = the day (I) lost." },
-        { "t": "も", "reading": "も", "romaji": "mo", "meaning": "also, even", "note": "Particle. 日も = even the days." },
-        { "t": "忘れない", "reading": "わすれない", "romaji": "wasurenai", "meaning": "won't forget", "note": "Negative of 忘れる (wasureru, to forget)." }
-      ] },
-    { "line": 3, "start": 13.6, "end": 17.6, "jp": "仲間が 手を伸ばす", "en": "My friends reach out their hands",
+        {
+          "t": "負けた",
+          "reading": "まけた",
+          "romaji": "maketa",
+          "meaning": "lost (a fight)",
+          "note": "Past of 負ける (makeru, to lose).",
+          "start": 8.8
+        },
+        {
+          "t": "日",
+          "reading": "ひ",
+          "romaji": "hi",
+          "meaning": "day",
+          "note": "負けた日 = the day (I) lost.",
+          "start": 9.41
+        },
+        {
+          "t": "も",
+          "reading": "も",
+          "romaji": "mo",
+          "meaning": "also, even",
+          "note": "Particle. 日も = even the days.",
+          "start": 9.62
+        },
+        {
+          "t": "忘れない",
+          "reading": "わすれない",
+          "romaji": "wasurenai",
+          "meaning": "won't forget",
+          "note": "Negative of 忘れる (wasureru, to forget).",
+          "start": 9.79
+        }
+      ]
+    },
+    {
+      "line": 3,
+      "start": 13.6,
+      "end": 16.44,
+      "jp": "仲間が 手を伸ばす",
+      "en": "My friends reach out their hands",
       "words": [
-        { "t": "仲間", "reading": "なかま", "romaji": "nakama", "meaning": "friends, comrades", "note": "The crew you fight beside. A favourite anime word." },
-        { "t": "が", "reading": "が", "romaji": "ga", "meaning": "(subject marker)", "note": "Marks who does the action." },
-        { "t": "手", "reading": "て", "romaji": "te", "meaning": "hand", "note": "Noun." },
-        { "t": "を", "reading": "を", "romaji": "o", "meaning": "(object marker)", "note": "Marks what the verb acts on." },
-        { "t": "伸ばす", "reading": "のばす", "romaji": "nobasu", "meaning": "to reach out, stretch", "note": "手を伸ばす = reach out a hand." }
-      ] },
-    { "line": 4, "start": 18.4, "end": 22.4, "jp": "もう一度 立ち上がれ", "en": "Stand up once more",
+        {
+          "t": "仲間",
+          "reading": "なかま",
+          "romaji": "nakama",
+          "meaning": "friends, comrades",
+          "note": "The crew you fight beside. A favourite anime word.",
+          "start": 13.6
+        },
+        {
+          "t": "が",
+          "reading": "が",
+          "romaji": "ga",
+          "meaning": "(subject marker)",
+          "note": "Marks who does the action.",
+          "start": 14.19
+        },
+        {
+          "t": "手",
+          "reading": "て",
+          "romaji": "te",
+          "meaning": "hand",
+          "note": "Noun.",
+          "start": 14.4
+        },
+        {
+          "t": "を",
+          "reading": "を",
+          "romaji": "o",
+          "meaning": "(object marker)",
+          "note": "Marks what the verb acts on.",
+          "start": 14.6
+        },
+        {
+          "t": "伸ばす",
+          "reading": "のばす",
+          "romaji": "nobasu",
+          "meaning": "to reach out, stretch",
+          "note": "手を伸ばす = reach out a hand.",
+          "start": 14.82
+        }
+      ]
+    },
+    {
+      "line": 4,
+      "start": 18.4,
+      "end": 21.17,
+      "jp": "もう一度 立ち上がれ",
+      "en": "Stand up once more",
       "words": [
-        { "t": "もう一度", "reading": "もういちど", "romaji": "mou ichido", "meaning": "once more, again", "note": "もう (more) + 一度 (one time)." },
-        { "t": "立ち上がれ", "reading": "たちあがれ", "romaji": "tachiagare", "meaning": "stand up!", "note": "Command of 立ち上がる (stand + rise)." }
-      ] },
-    { "line": 5, "start": 23.2, "end": 27.2, "jp": "青い炎が 空に光る", "en": "A blue flame shines in the sky",
+        {
+          "t": "もう一度",
+          "reading": "もういちど",
+          "romaji": "mou ichido",
+          "meaning": "once more, again",
+          "note": "もう (more) + 一度 (one time).",
+          "start": 18.4
+        },
+        {
+          "t": "立ち上がれ",
+          "reading": "たちあがれ",
+          "romaji": "tachiagare",
+          "meaning": "stand up!",
+          "note": "Command of 立ち上がる (stand + rise).",
+          "start": 19.32
+        }
+      ]
+    },
+    {
+      "line": 5,
+      "start": 23.2,
+      "end": 26.35,
+      "jp": "青い炎が 空に光る",
+      "en": "A blue flame shines in the sky",
       "words": [
-        { "t": "青い", "reading": "あおい", "romaji": "aoi", "meaning": "blue", "note": "い-adjective." },
-        { "t": "炎", "reading": "ほのお", "romaji": "honoo", "meaning": "flame", "note": "A bigger, wilder fire than 火 (hi)." },
-        { "t": "が", "reading": "が", "romaji": "ga", "meaning": "(subject marker)", "note": "Marks what shines." },
-        { "t": "空", "reading": "そら", "romaji": "sora", "meaning": "sky", "note": "Noun." },
-        { "t": "に", "reading": "に", "romaji": "ni", "meaning": "in / at", "note": "Particle of place." },
-        { "t": "光る", "reading": "ひかる", "romaji": "hikaru", "meaning": "to shine", "note": "Verb. Same 光 as 光 (hikari, light)." }
-      ] },
-    { "line": 6, "start": 28.0, "end": 32.0, "jp": "夢はまだ 終わらない", "en": "The dream isn't over yet",
+        {
+          "t": "青い",
+          "reading": "あおい",
+          "romaji": "aoi",
+          "meaning": "blue",
+          "note": "い-adjective.",
+          "start": 23.2
+        },
+        {
+          "t": "炎",
+          "reading": "ほのお",
+          "romaji": "honoo",
+          "meaning": "flame",
+          "note": "A bigger, wilder fire than 火 (hi).",
+          "start": 23.76
+        },
+        {
+          "t": "が",
+          "reading": "が",
+          "romaji": "ga",
+          "meaning": "(subject marker)",
+          "note": "Marks what shines.",
+          "start": 24.26
+        },
+        {
+          "t": "空",
+          "reading": "そら",
+          "romaji": "sora",
+          "meaning": "sky",
+          "note": "Noun.",
+          "start": 24.41
+        },
+        {
+          "t": "に",
+          "reading": "に",
+          "romaji": "ni",
+          "meaning": "in / at",
+          "note": "Particle of place.",
+          "start": 24.81
+        },
+        {
+          "t": "光る",
+          "reading": "ひかる",
+          "romaji": "hikaru",
+          "meaning": "to shine",
+          "note": "Verb. Same 光 as 光 (hikari, light).",
+          "start": 25.01
+        }
+      ]
+    },
+    {
+      "line": 6,
+      "start": 28,
+      "end": 30.82,
+      "jp": "夢はまだ 終わらない",
+      "en": "The dream isn't over yet",
       "words": [
-        { "t": "夢", "reading": "ゆめ", "romaji": "yume", "meaning": "dream", "note": "Noun." },
-        { "t": "は", "reading": "は", "romaji": "wa", "meaning": "(topic marker)", "note": "Written は, read \"wa\"." },
-        { "t": "まだ", "reading": "まだ", "romaji": "mada", "meaning": "still, not yet", "note": "With a negative verb: not yet." },
-        { "t": "終わらない", "reading": "おわらない", "romaji": "owaranai", "meaning": "doesn't end", "note": "Negative of 終わる (owaru, to end)." }
-      ] },
-    { "line": 7, "start": 32.8, "end": 36.8, "jp": "叫べ 君の名前を", "en": "Shout out your name",
+        {
+          "t": "夢",
+          "reading": "ゆめ",
+          "romaji": "yume",
+          "meaning": "dream",
+          "note": "Noun.",
+          "start": 28
+        },
+        {
+          "t": "は",
+          "reading": "は",
+          "romaji": "wa",
+          "meaning": "(topic marker)",
+          "note": "Written は, read \"wa\".",
+          "start": 28.42
+        },
+        {
+          "t": "まだ",
+          "reading": "まだ",
+          "romaji": "mada",
+          "meaning": "still, not yet",
+          "note": "With a negative verb: not yet.",
+          "start": 28.65
+        },
+        {
+          "t": "終わらない",
+          "reading": "おわらない",
+          "romaji": "owaranai",
+          "meaning": "doesn't end",
+          "note": "Negative of 終わる (owaru, to end).",
+          "start": 28.99
+        }
+      ]
+    },
+    {
+      "line": 7,
+      "start": 32.8,
+      "end": 35.64,
+      "jp": "叫べ 君の名前を",
+      "en": "Shout out your name",
       "words": [
-        { "t": "叫べ", "reading": "さけべ", "romaji": "sakebe", "meaning": "shout!", "note": "Command of 叫ぶ (sakebu, to shout)." },
-        { "t": "君", "reading": "きみ", "romaji": "kimi", "meaning": "you", "note": "Soft, familiar \"you\". Very common in songs." },
-        { "t": "の", "reading": "の", "romaji": "no", "meaning": "of / 's", "note": "君の = your." },
-        { "t": "名前", "reading": "なまえ", "romaji": "namae", "meaning": "name", "note": "Noun." },
-        { "t": "を", "reading": "を", "romaji": "o", "meaning": "(object marker)", "note": "Marks what you shout." }
-      ] },
-    { "line": 8, "start": 37.6, "end": 42.0, "jp": "明日へ 一緒に行こう", "en": "Let's go toward tomorrow together",
+        {
+          "t": "叫べ",
+          "reading": "さけべ",
+          "romaji": "sakebe",
+          "meaning": "shout!",
+          "note": "Command of 叫ぶ (sakebu, to shout).",
+          "start": 32.8
+        },
+        {
+          "t": "君",
+          "reading": "きみ",
+          "romaji": "kimi",
+          "meaning": "you",
+          "note": "Soft, familiar \"you\". Very common in songs.",
+          "start": 33.44
+        },
+        {
+          "t": "の",
+          "reading": "の",
+          "romaji": "no",
+          "meaning": "of / 's",
+          "note": "君の = your.",
+          "start": 33.83
+        },
+        {
+          "t": "名前",
+          "reading": "なまえ",
+          "romaji": "namae",
+          "meaning": "name",
+          "note": "Noun.",
+          "start": 33.98
+        },
+        {
+          "t": "を",
+          "reading": "を",
+          "romaji": "o",
+          "meaning": "(object marker)",
+          "note": "Marks what you shout.",
+          "start": 34.6
+        }
+      ]
+    },
+    {
+      "line": 8,
+      "start": 37.6,
+      "end": 40.51,
+      "jp": "明日へ 一緒に行こう",
+      "en": "Let's go toward tomorrow together",
       "words": [
-        { "t": "明日", "reading": "あした", "romaji": "ashita", "meaning": "tomorrow", "note": "Special reading." },
-        { "t": "へ", "reading": "へ", "romaji": "e", "meaning": "toward", "note": "Direction particle, read \"e\"." },
-        { "t": "一緒に", "reading": "いっしょに", "romaji": "issho ni", "meaning": "together", "note": "Adverb." },
-        { "t": "行こう", "reading": "いこう", "romaji": "ikou", "meaning": "let's go", "note": "Volitional form of 行く (iku, to go)." }
-      ] }
+        {
+          "t": "明日",
+          "reading": "あした",
+          "romaji": "ashita",
+          "meaning": "tomorrow",
+          "note": "Special reading.",
+          "start": 37.6
+        },
+        {
+          "t": "へ",
+          "reading": "へ",
+          "romaji": "e",
+          "meaning": "toward",
+          "note": "Direction particle, read \"e\".",
+          "start": 38.2
+        },
+        {
+          "t": "一緒に",
+          "reading": "いっしょに",
+          "romaji": "issho ni",
+          "meaning": "together",
+          "note": "Adverb.",
+          "start": 38.4
+        },
+        {
+          "t": "行こう",
+          "reading": "いこう",
+          "romaji": "ikou",
+          "meaning": "let's go",
+          "note": "Volitional form of 行く (iku, to go).",
+          "start": 39.12
+        }
+      ]
+    }
   ]
 }

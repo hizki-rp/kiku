@@ -316,5 +316,11 @@ if (preg_match('#^/words/(\d+)$#', $route, $m)) {
 }
 
 if ($route === '/' || $route === '/health') out(['ok' => true]);
-if ($route === '/config') out(['socket_url' => env('SOCKET_URL')]);   // public: where the realtime server lives
+// Public runtime config: where the realtime server lives, plus optional TURN relays for voice on strict networks
+// (TURN_URLS=turn:host:80,turns:host:443?transport=tcp  TURN_USERNAME=…  TURN_CREDENTIAL=…).
+if ($route === '/config') {
+  $ice = [['urls' => ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302']]];
+  if (env('TURN_URLS') !== '') $ice[] = ['urls' => array_map('trim', explode(',', env('TURN_URLS'))), 'username' => env('TURN_USERNAME'), 'credential' => env('TURN_CREDENTIAL')];
+  out(['socket_url' => env('SOCKET_URL'), 'ice_servers' => $ice]);
+}
 fail('Not found', 404);

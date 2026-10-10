@@ -343,6 +343,20 @@ io.on('connection', (socket) => {
     reply({ ok: true });
   });
 
+  // Fallback voice relay: when two people can't connect directly (strict mobile networks), the browser sends
+  // ~100 ms chunks of 16 kHz PCM here and the server forwards them. volatile = drop chunks rather than lag.
+  socket.on('voice_pcm', (d) => {
+    const r = rooms.get(String(d?.roomId));
+    const m = r?.members.get(me.id);
+    if (!m?.voice || m.muted || m.socketId !== socket.id) return;
+    const pcm = d.pcm;
+    if (!pcm || pcm.byteLength > 16000 || !Array.isArray(d.to)) return;
+    for (const id of d.to.slice(0, MAX_VOICE)) {
+      const to = r.members.get(String(id));
+      if (to?.voice && to.socketId && to.id !== me.id) io.to(to.socketId).volatile.emit('voice_pcm', { from: me.id, pcm });
+    }
+  });
+
   on('close_room', (d, reply) => {
     const r = roomFor(d, reply, { host: true });
     if (!r) return;

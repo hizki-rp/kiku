@@ -27,7 +27,7 @@ mysql -uroot -e "CREATE DATABASE tomoshibi CHARACTER SET utf8mb4"
 mysql -uroot tomoshibi < sql/001_init.sql
 mysql -uroot tomoshibi < sql/002_sample_song.sql
 mysql -uroot tomoshibi < sql/003_vocal_track.sql
-node sql/make-sample-audio.js          # regenerates the two placeholder WAVs (already committed)
+node content/demo-songs/make-audio.js  # (Windows, needs a Japanese voice) re-voices the demo + sample songs and re-times their lyrics
 
 # 2. PHP API on :8080, run from the repo root
 cp api/.env.example api/.env           # set DB_*, JWT_SECRET, PUBLIC_BASE_URL=http://localhost:8080/api, CLIENT_ORIGIN=*

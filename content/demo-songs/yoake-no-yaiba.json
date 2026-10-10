@@ -1,66 +1,373 @@
 {
   "songId": 0,
   "lines": [
-    { "line": 1, "start": 4.0, "end": 8.0, "jp": "暗い夜に 光を探す", "en": "In the dark night, I search for light",
+    {
+      "line": 1,
+      "start": 4,
+      "end": 7.27,
+      "jp": "暗い夜に 光を探す",
+      "en": "In the dark night, I search for light",
       "words": [
-        { "t": "暗い", "reading": "くらい", "romaji": "kurai", "meaning": "dark", "note": "い-adjective. 暗い夜 = a dark night." },
-        { "t": "夜", "reading": "よる", "romaji": "yoru", "meaning": "night", "note": "Noun." },
-        { "t": "に", "reading": "に", "romaji": "ni", "meaning": "in / at (a time)", "note": "Particle marking when something happens." },
-        { "t": "光", "reading": "ひかり", "romaji": "hikari", "meaning": "light", "note": "Noun. Also a common name." },
-        { "t": "を", "reading": "を", "romaji": "o", "meaning": "(object marker)", "note": "Marks what the verb acts on." },
-        { "t": "探す", "reading": "さがす", "romaji": "sagasu", "meaning": "to search for", "note": "Verb, dictionary form." }
-      ] },
-    { "line": 2, "start": 8.8, "end": 12.8, "jp": "刀を握って 前へ進む", "en": "Gripping my sword, I move forward",
+        {
+          "t": "暗い",
+          "reading": "くらい",
+          "romaji": "kurai",
+          "meaning": "dark",
+          "note": "い-adjective. 暗い夜 = a dark night.",
+          "start": 4
+        },
+        {
+          "t": "夜",
+          "reading": "よる",
+          "romaji": "yoru",
+          "meaning": "night",
+          "note": "Noun.",
+          "start": 4.6
+        },
+        {
+          "t": "に",
+          "reading": "に",
+          "romaji": "ni",
+          "meaning": "in / at (a time)",
+          "note": "Particle marking when something happens.",
+          "start": 4.94
+        },
+        {
+          "t": "光",
+          "reading": "ひかり",
+          "romaji": "hikari",
+          "meaning": "light",
+          "note": "Noun. Also a common name.",
+          "start": 5.09
+        },
+        {
+          "t": "を",
+          "reading": "を",
+          "romaji": "o",
+          "meaning": "(object marker)",
+          "note": "Marks what the verb acts on.",
+          "start": 5.59
+        },
+        {
+          "t": "探す",
+          "reading": "さがす",
+          "romaji": "sagasu",
+          "meaning": "to search for",
+          "note": "Verb, dictionary form.",
+          "start": 5.78
+        }
+      ]
+    },
+    {
+      "line": 2,
+      "start": 8.8,
+      "end": 12.24,
+      "jp": "刀を握って 前へ進む",
+      "en": "Gripping my sword, I move forward",
       "words": [
-        { "t": "刀", "reading": "かたな", "romaji": "katana", "meaning": "sword", "note": "The curved Japanese sword." },
-        { "t": "を", "reading": "を", "romaji": "o", "meaning": "(object marker)", "note": "Marks what the verb acts on." },
-        { "t": "握って", "reading": "にぎって", "romaji": "nigitte", "meaning": "gripping, and…", "note": "て-form of 握る (nigiru, to grip). て links actions." },
-        { "t": "前", "reading": "まえ", "romaji": "mae", "meaning": "front, forward", "note": "Noun. 前へ = toward the front." },
-        { "t": "へ", "reading": "へ", "romaji": "e", "meaning": "toward", "note": "Particle of direction. Written へ, read \"e\"." },
-        { "t": "進む", "reading": "すすむ", "romaji": "susumu", "meaning": "to advance, move forward", "note": "Verb, dictionary form." }
-      ] },
-    { "line": 3, "start": 13.6, "end": 17.6, "jp": "怖くても 逃げない", "en": "Even if I'm scared, I won't run away",
+        {
+          "t": "刀",
+          "reading": "かたな",
+          "romaji": "katana",
+          "meaning": "sword",
+          "note": "The curved Japanese sword.",
+          "start": 8.8
+        },
+        {
+          "t": "を",
+          "reading": "を",
+          "romaji": "o",
+          "meaning": "(object marker)",
+          "note": "Marks what the verb acts on.",
+          "start": 9.43
+        },
+        {
+          "t": "握って",
+          "reading": "にぎって",
+          "romaji": "nigitte",
+          "meaning": "gripping, and…",
+          "note": "て-form of 握る (nigiru, to grip). て links actions.",
+          "start": 9.63
+        },
+        {
+          "t": "前",
+          "reading": "まえ",
+          "romaji": "mae",
+          "meaning": "front, forward",
+          "note": "Noun. 前へ = toward the front.",
+          "start": 10.27
+        },
+        {
+          "t": "へ",
+          "reading": "へ",
+          "romaji": "e",
+          "meaning": "toward",
+          "note": "Particle of direction. Written へ, read \"e\".",
+          "start": 10.68
+        },
+        {
+          "t": "進む",
+          "reading": "すすむ",
+          "romaji": "susumu",
+          "meaning": "to advance, move forward",
+          "note": "Verb, dictionary form.",
+          "start": 10.85
+        }
+      ]
+    },
+    {
+      "line": 3,
+      "start": 13.6,
+      "end": 16.3,
+      "jp": "怖くても 逃げない",
+      "en": "Even if I'm scared, I won't run away",
       "words": [
-        { "t": "怖くても", "reading": "こわくても", "romaji": "kowakutemo", "meaning": "even if (I'm) scared", "note": "怖い (scary) → 怖くても = even if scary." },
-        { "t": "逃げない", "reading": "にげない", "romaji": "nigenai", "meaning": "won't run away", "note": "Negative of 逃げる (nigeru, to run away)." }
-      ] },
-    { "line": 4, "start": 18.4, "end": 22.4, "jp": "家族の声が 聞こえる", "en": "I can hear my family's voices",
+        {
+          "t": "怖くても",
+          "reading": "こわくても",
+          "romaji": "kowakutemo",
+          "meaning": "even if (I'm) scared",
+          "note": "怖い (scary) → 怖くても = even if scary.",
+          "start": 13.6
+        },
+        {
+          "t": "逃げない",
+          "reading": "にげない",
+          "romaji": "nigenai",
+          "meaning": "won't run away",
+          "note": "Negative of 逃げる (nigeru, to run away).",
+          "start": 14.56
+        }
+      ]
+    },
+    {
+      "line": 4,
+      "start": 18.4,
+      "end": 21.42,
+      "jp": "家族の声が 聞こえる",
+      "en": "I can hear my family's voices",
       "words": [
-        { "t": "家族", "reading": "かぞく", "romaji": "kazoku", "meaning": "family", "note": "Noun." },
-        { "t": "の", "reading": "の", "romaji": "no", "meaning": "of / 's", "note": "家族の声 = family's voice." },
-        { "t": "声", "reading": "こえ", "romaji": "koe", "meaning": "voice", "note": "Noun." },
-        { "t": "が", "reading": "が", "romaji": "ga", "meaning": "(subject marker)", "note": "Marks what is heard." },
-        { "t": "聞こえる", "reading": "きこえる", "romaji": "kikoeru", "meaning": "can be heard", "note": "Sound reaches you by itself (vs 聞く, to listen)." }
-      ] },
-    { "line": 5, "start": 23.2, "end": 27.2, "jp": "燃えろ 燃えろ 心の火", "en": "Burn, burn, the fire in my heart",
+        {
+          "t": "家族",
+          "reading": "かぞく",
+          "romaji": "kazoku",
+          "meaning": "family",
+          "note": "Noun.",
+          "start": 18.4
+        },
+        {
+          "t": "の",
+          "reading": "の",
+          "romaji": "no",
+          "meaning": "of / 's",
+          "note": "家族の声 = family's voice.",
+          "start": 19.07
+        },
+        {
+          "t": "声",
+          "reading": "こえ",
+          "romaji": "koe",
+          "meaning": "voice",
+          "note": "Noun.",
+          "start": 19.21
+        },
+        {
+          "t": "が",
+          "reading": "が",
+          "romaji": "ga",
+          "meaning": "(subject marker)",
+          "note": "Marks what is heard.",
+          "start": 19.62
+        },
+        {
+          "t": "聞こえる",
+          "reading": "きこえる",
+          "romaji": "kikoeru",
+          "meaning": "can be heard",
+          "note": "Sound reaches you by itself (vs 聞く, to listen).",
+          "start": 19.78
+        }
+      ]
+    },
+    {
+      "line": 5,
+      "start": 23.2,
+      "end": 26.14,
+      "jp": "燃えろ 燃えろ 心の火",
+      "en": "Burn, burn, the fire in my heart",
       "words": [
-        { "t": "燃えろ", "reading": "もえろ", "romaji": "moero", "meaning": "burn!", "note": "Command form of 燃える (moeru, to burn). Very common in anime songs." },
-        { "t": "燃えろ", "reading": "もえろ", "romaji": "moero", "meaning": "burn!", "note": "Repeated for power." },
-        { "t": "心", "reading": "こころ", "romaji": "kokoro", "meaning": "heart, mind", "note": "Noun. The emotional heart." },
-        { "t": "の", "reading": "の", "romaji": "no", "meaning": "of / 's", "note": "心の火 = the heart's fire." },
-        { "t": "火", "reading": "ひ", "romaji": "hi", "meaning": "fire", "note": "Noun." }
-      ] },
-    { "line": 6, "start": 28.0, "end": 32.0, "jp": "強くなれ 今日より", "en": "Become stronger than today",
+        {
+          "t": "燃えろ",
+          "reading": "もえろ",
+          "romaji": "moero",
+          "meaning": "burn!",
+          "note": "Command form of 燃える (moeru, to burn). Very common in anime songs.",
+          "start": 23.2
+        },
+        {
+          "t": "燃えろ",
+          "reading": "もえろ",
+          "romaji": "moero",
+          "meaning": "burn!",
+          "note": "Repeated for power.",
+          "start": 23.74
+        },
+        {
+          "t": "心",
+          "reading": "こころ",
+          "romaji": "kokoro",
+          "meaning": "heart, mind",
+          "note": "Noun. The emotional heart.",
+          "start": 24.26
+        },
+        {
+          "t": "の",
+          "reading": "の",
+          "romaji": "no",
+          "meaning": "of / 's",
+          "note": "心の火 = the heart's fire.",
+          "start": 24.86
+        },
+        {
+          "t": "火",
+          "reading": "ひ",
+          "romaji": "hi",
+          "meaning": "fire",
+          "note": "Noun.",
+          "start": 25.02
+        }
+      ]
+    },
+    {
+      "line": 6,
+      "start": 28,
+      "end": 30.68,
+      "jp": "強くなれ 今日より",
+      "en": "Become stronger than today",
       "words": [
-        { "t": "強く", "reading": "つよく", "romaji": "tsuyoku", "meaning": "strong(ly)", "note": "強い (strong) → 強く before a verb." },
-        { "t": "なれ", "reading": "なれ", "romaji": "nare", "meaning": "become!", "note": "Command form of なる (naru, to become). 強くなれ = become strong!" },
-        { "t": "今日", "reading": "きょう", "romaji": "kyou", "meaning": "today", "note": "Special reading: 今 + 日 = きょう." },
-        { "t": "より", "reading": "より", "romaji": "yori", "meaning": "than", "note": "Comparison particle. 今日より = than today." }
-      ] },
-    { "line": 7, "start": 32.8, "end": 36.8, "jp": "夜明けまで 走り続ける", "en": "I keep running until dawn",
+        {
+          "t": "強く",
+          "reading": "つよく",
+          "romaji": "tsuyoku",
+          "meaning": "strong(ly)",
+          "note": "強い (strong) → 強く before a verb.",
+          "start": 28
+        },
+        {
+          "t": "なれ",
+          "reading": "なれ",
+          "romaji": "nare",
+          "meaning": "become!",
+          "note": "Command form of なる (naru, to become). 強くなれ = become strong!",
+          "start": 28.66
+        },
+        {
+          "t": "今日",
+          "reading": "きょう",
+          "romaji": "kyou",
+          "meaning": "today",
+          "note": "Special reading: 今 + 日 = きょう.",
+          "start": 29
+        },
+        {
+          "t": "より",
+          "reading": "より",
+          "romaji": "yori",
+          "meaning": "than",
+          "note": "Comparison particle. 今日より = than today.",
+          "start": 29.38
+        }
+      ]
+    },
+    {
+      "line": 7,
+      "start": 32.8,
+      "end": 35.98,
+      "jp": "夜明けまで 走り続ける",
+      "en": "I keep running until dawn",
       "words": [
-        { "t": "夜明け", "reading": "よあけ", "romaji": "yoake", "meaning": "dawn", "note": "夜 (night) + 明け (opening): the night opens up." },
-        { "t": "まで", "reading": "まで", "romaji": "made", "meaning": "until", "note": "Particle. 夜明けまで = until dawn." },
-        { "t": "走り続ける", "reading": "はしりつづける", "romaji": "hashiritsuzukeru", "meaning": "keep running", "note": "走る (run) + 続ける (continue)." }
-      ] },
-    { "line": 8, "start": 37.6, "end": 42.0, "jp": "この刃で 未来を切り開け", "en": "With this blade, carve open the future",
+        {
+          "t": "夜明け",
+          "reading": "よあけ",
+          "romaji": "yoake",
+          "meaning": "dawn",
+          "note": "夜 (night) + 明け (opening): the night opens up.",
+          "start": 32.8
+        },
+        {
+          "t": "まで",
+          "reading": "まで",
+          "romaji": "made",
+          "meaning": "until",
+          "note": "Particle. 夜明けまで = until dawn.",
+          "start": 33.4
+        },
+        {
+          "t": "走り続ける",
+          "reading": "はしりつづける",
+          "romaji": "hashiritsuzukeru",
+          "meaning": "keep running",
+          "note": "走る (run) + 続ける (continue).",
+          "start": 33.76
+        }
+      ]
+    },
+    {
+      "line": 8,
+      "start": 37.6,
+      "end": 41.12,
+      "jp": "この刃で 未来を切り開け",
+      "en": "With this blade, carve open the future",
       "words": [
-        { "t": "この", "reading": "この", "romaji": "kono", "meaning": "this", "note": "Comes before a noun: この刃 = this blade." },
-        { "t": "刃", "reading": "やいば", "romaji": "yaiba", "meaning": "blade", "note": "Poetic word for a sword's blade." },
-        { "t": "で", "reading": "で", "romaji": "de", "meaning": "with, by means of", "note": "Particle for the tool you use." },
-        { "t": "未来", "reading": "みらい", "romaji": "mirai", "meaning": "future", "note": "Noun." },
-        { "t": "を", "reading": "を", "romaji": "o", "meaning": "(object marker)", "note": "Marks what the verb acts on." },
-        { "t": "切り開け", "reading": "きりひらけ", "romaji": "kirihirake", "meaning": "carve open! cut a path!", "note": "Command of 切り開く (cut + open)." }
-      ] }
+        {
+          "t": "この",
+          "reading": "この",
+          "romaji": "kono",
+          "meaning": "this",
+          "note": "Comes before a noun: この刃 = this blade.",
+          "start": 37.6
+        },
+        {
+          "t": "刃",
+          "reading": "やいば",
+          "romaji": "yaiba",
+          "meaning": "blade",
+          "note": "Poetic word for a sword's blade.",
+          "start": 38.03
+        },
+        {
+          "t": "で",
+          "reading": "で",
+          "romaji": "de",
+          "meaning": "with, by means of",
+          "note": "Particle for the tool you use.",
+          "start": 38.55
+        },
+        {
+          "t": "未来",
+          "reading": "みらい",
+          "romaji": "mirai",
+          "meaning": "future",
+          "note": "Noun.",
+          "start": 38.72
+        },
+        {
+          "t": "を",
+          "reading": "を",
+          "romaji": "o",
+          "meaning": "(object marker)",
+          "note": "Marks what the verb acts on.",
+          "start": 39.26
+        },
+        {
+          "t": "切り開け",
+          "reading": "きりひらけ",
+          "romaji": "kirihirake",
+          "meaning": "carve open! cut a path!",
+          "note": "Command of 切り開く (cut + open).",
+          "start": 39.43
+        }
+      ]
+    }
   ]
 }

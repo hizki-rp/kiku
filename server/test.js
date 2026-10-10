@@ -58,6 +58,12 @@ const once = (s, ev) => within(new Promise((res) => s.once(ev, res)), `event ${e
   const sig = once(host, 'voice_signal');
   await emit(guest, 'voice_signal', { roomId: room.id, to: '1', data: { sdp: 'offer' } });
   assert.deepEqual(await sig, { from: '2', data: { sdp: 'offer' } });
+  // relay fallback: PCM from a voice member is forwarded to the named voice members only
+  const pcm = once(host, 'voice_pcm');
+  guest.emit('voice_pcm', { roomId: room.id, to: ['1'], pcm: new Int16Array([1, -2, 3]).buffer });
+  const got = await pcm;
+  assert.equal(got.from, '2');
+  assert.deepEqual([...new Int16Array(new Uint8Array(got.pcm).buffer)], [1, -2, 3]);
   const left = once(host, 'voice_left');
   await emit(guest, 'voice_leave', { roomId: room.id });
   assert.equal((await left).userId, '2');

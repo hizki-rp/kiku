@@ -14,7 +14,7 @@ const REACTIONS = ['Nice!', 'Encore', 'Clap'];
 // Room · in the booth. Matches design-export/Room.dc.html, plus voice chat and disco lights.
 export default function Room() {
   const { id } = useLocalSearchParams();
-  const { user, room, feed, knocks, songs, loadSongs, emit, subscribe, leaveRoom, serverNow, notice, setNotice } = useSession();
+  const { user, room, feed, knocks, songs, loadSongs, emit, subscribe, sendRaw, leaveRoom, serverNow, notice, setNotice } = useSession();
   const [gone, setGone] = useState(null);
   const [showTr, setShowTr] = useState(true);
   const [showRuby, setShowRuby] = useState(true);
@@ -31,7 +31,7 @@ export default function Room() {
   const vocalsOn = !!song?.vocal_url && (myVocals ?? !!now?.vocals);
   const { t, duration, lyrics, blocked, play } = usePlayback(now, song, serverNow, vocalsOn);
   const myVoice = room?.id === id ? room.members.find((m) => m.id === String(user.id))?.voice : undefined;
-  const voice = useVoice(id, emit, subscribe, myVoice);
+  const voice = useVoice(id, emit, subscribe, myVoice, sendRaw);
   const lines = lyrics?.lines || [];
   const { cur, sung } = lyricAt(lines, t);
 
@@ -163,6 +163,13 @@ export default function Room() {
           <T size={13} color={toast ? c.accentSoft : c.muted} numberOfLines={2}>
             {toast || (upNext ? `Up next · ${upNext.name} — ${upNext.title}` : 'Up next · nobody yet')}
           </T>
+          {voice.state === 'on' ? (
+            <T size={12} color={c.muted} numberOfLines={2}>
+              {Object.keys(voice.links).length
+                ? 'Voice · ' + Object.entries(voice.links).map(([uid, how]) => `${room.members.find((m) => m.id === uid)?.name || 'someone'} ${how === 'direct' ? '(direct)' : how === 'relay' ? '(via relay)' : '(connecting…)'}`).join(' · ')
+                : 'Voice · you are on, waiting for someone else to join voice'}
+            </T>
+          ) : null}
           {feed.slice(-6).map((m) => (
             <T key={m.id} size={14} style={{ lineHeight: 20 }}>
               <T size={14} weight={700} color={c.accentSoft}>{m.name}</T> {m.reaction ? <T size={14} color={c.muted}>{m.text}</T> : m.text}

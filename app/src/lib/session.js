@@ -2,6 +2,7 @@ import { createContext, createElement, useCallback, useContext, useEffect, useRe
 import { Platform } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { io } from 'socket.io-client';
+import { setIceServers } from './useVoice';
 
 export const API_URL = (process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8080/api').replace(/\/$/, '');
 // Fallback only: the API's /config (SOCKET_URL in api/.env) wins, so moving the Render service needs no rebuild.
@@ -108,6 +109,7 @@ export function SessionProvider({ children }) {
       const cfg = await api('/config').catch(() => ({}));
       if (cancelled) return;
       const url = cfg.socket_url || SOCKET_URL;
+      setIceServers(cfg.ice_servers);   // STUN + any TURN relays configured on the server
       // Render free tier sleeps; wake it over plain HTTP while socket.io retries with backoff.
       fetch(url).catch(() => {});
       s = io(url, {
@@ -176,11 +178,13 @@ export function SessionProvider({ children }) {
     s?.on(event, fn);
     return () => s?.off(event, fn);
   }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Fire-and-forget, droppable emit for streaming data (voice relay chunks): never queue stale audio.
+  const sendRaw = useCallback((event, data) => { const s = sockRef.current; if (s?.connected) s.volatile.emit(event, data); }, []);
   const serverNow = useCallback(() => Date.now() + offsetRef.current, []);
 
   const value = {
     ready, user, status, everConnected, songs, loadSongs, rooms, room, feed, knocks, notice, setNotice,
-    signIn, signOut, emit, subscribe, enterRoom, leaveRoom, serverNow,
+    signIn, signOut, emit, subscribe, sendRaw, enterRoom, leaveRoom, serverNow,
   };
   return createElement(Ctx.Provider, { value }, children);
 }
